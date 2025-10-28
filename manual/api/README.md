@@ -4,6 +4,8 @@ This folder contains the backend (API) for the School Equipment Lending Portal â
 ### `npm install`
 this will install all dependencies
 
+Create .env file inside api folder using .env.example file as example beacuse we usually dont push these files.
+
 Install SQlite in your local:
 go to https://www.sqlite.org/download.html
 
