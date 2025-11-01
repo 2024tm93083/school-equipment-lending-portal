@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import db from "./src/db/database.js";
 
+import userRoutes from "./src/routes/user.routes.js";
 import equipmentRoutes from "./src/routes/equipment.routes.js";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.get("/", (req, res) => res.json({ message: "API running ✅" }));
 
 // Routes
+app.use('/api/user', userRoutes);
 app.use("/api/equipment", equipmentRoutes);
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
