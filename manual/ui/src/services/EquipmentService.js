@@ -2,12 +2,17 @@ import API from "./api";
 
 /**
  * EquipmentService
+ * GET  /equipment/admin
  * GET  /equipment
  * POST /equipment
  * PUT  /equipment/:id
  * DELETE /equipment/:id
  */
 
+export const getAllEquipmentAdmin = async () => {
+  const res = await API.get("/equipment/admin");
+  return res.data;
+};
 export const getAllEquipment = async () => {
   const res = await API.get("/equipment");
   return res.data;

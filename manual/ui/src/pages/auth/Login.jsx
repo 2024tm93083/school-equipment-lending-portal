@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/auth";
 import AuthLayout from "../../components/layout/AuthLayout";
@@ -8,6 +8,15 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Filter logic
+  useEffect(() => {
+    const role = localStorage.getItem("role") ?? null;
+    console.log("User role on login page load:", role);
+    if (role === "admin") navigate("/admin/equipment");
+    else if (role === "student") navigate("/equipments");
+    else if (role === "staff") navigate("/requests");
+  }, [navigate]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,16 +30,16 @@ export default function Login() {
     try {
       const data = await login(form.email, form.password);
       console.log(data);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('rolw', data.user.role);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+      localStorage.setItem("id", data.user.userId);
 
       // Redirect based on role
-      const role = data.user.role;
-      navigate("/admin/equipment")
-      console.log(role)
-      // if (role === "admin") navigate("/admin/equipment");
-      // else if (role === "student") navigate("/equipments");
-      // else navigate("/");
+      if (data.user.role === "admin") {
+        navigate("/admin/equipment");
+      } else if (data.user.role === "student") {
+        navigate("/equipments");
+      } else if (data.user.role === "staff") navigate("/requests");
     } catch (err) {
       setError(err.response?.data?.error || "Login failed");
     } finally {
@@ -48,7 +57,7 @@ export default function Login() {
             <br />
             Admin: <code>admin@example.com / admin123</code>
             <br />
-            Student: <code>student@example.com / student123</code>
+            Student: <code>studenta@example.com / student123</code>
             <br />
             Staff: <code>staff@example.com / staff123</code>
           </small>

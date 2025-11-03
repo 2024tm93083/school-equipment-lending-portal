@@ -1,6 +1,12 @@
-import { useEffect, useState } from 'react';
-import { getAllEquipment, createEquipment, updateEquipment, deleteEquipment } from '../../services/EquipmentService';
-import EquipmentFormModal from '../../components/equipment/equipment-form-modal/EquipmentFormModal';
+import { useEffect, useState } from "react";
+import {
+  getAllEquipmentAdmin,
+  createEquipment,
+  updateEquipment,
+  deleteEquipment,
+} from "../../services/EquipmentService";
+import { returnRequest } from "../../services/RequestService";
+import EquipmentFormModal from "../../components/equipment/equipment-form-modal/EquipmentFormModal";
 
 export default function EquipmentAdmin() {
   const [equipment, setEquipment] = useState([]);
@@ -9,7 +15,7 @@ export default function EquipmentAdmin() {
   const [editingItem, setEditingItem] = useState(null);
 
   const loadEquipment = async () => {
-    const data = await getAllEquipment();
+    const data = await getAllEquipmentAdmin();
     setEquipment(data);
     setLoading(false);
   };
@@ -30,7 +36,7 @@ export default function EquipmentAdmin() {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this equipment?')) {
+    if (window.confirm("Are you sure you want to delete this equipment?")) {
       await deleteEquipment(id);
       loadEquipment();
     }
@@ -46,7 +52,19 @@ export default function EquipmentAdmin() {
     setShowModal(true);
   };
 
-  if (loading) return <div className="text-center"><div className="spinner-border"></div></div>;
+  const openReturnConfirmation = async (id) => {
+    if (window.confirm("Are you sure you that equipment have been returned?")) {
+      await returnRequest(id);
+      loadEquipment();
+    }
+  };
+
+  if (loading)
+    return (
+      <div className="text-center">
+        <div className="spinner-border"></div>
+      </div>
+    );
 
   return (
     <div>
@@ -58,7 +76,7 @@ export default function EquipmentAdmin() {
       </div>
 
       <div className="table-responsive">
-        <table className="table table-striped table-hover">
+        <table className="table table-striped table-hover align-middle">
           <thead className="table-dark">
             <tr>
               <th>Name</th>
@@ -67,23 +85,65 @@ export default function EquipmentAdmin() {
               <th>Quantity</th>
               <th>Available</th>
               <th>Actions</th>
+              <th>Borrowers</th>
             </tr>
           </thead>
           <tbody>
-            {equipment.map(item => (
+            {equipment.map((item) => (
               <tr key={item.id}>
                 <td>{item.name}</td>
                 <td>{item.category}</td>
                 <td>{item.condition}</td>
                 <td>{item.quantity}</td>
-                <td>{item.availability ? 'Yes' : 'No'}</td>
+                <td>{item.isAvailable ? item.available : "No"}</td>
                 <td>
-                  <button className="btn btn-sm btn-warning me-2" onClick={() => openEdit(item)}>
+                  <button
+                    className="btn btn-sm btn-warning me-2"
+                    onClick={() => openEdit(item)}
+                  >
                     Edit
                   </button>
-                  <button className="btn btn-sm btn-danger" onClick={() => handleDelete(item.id)}>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => handleDelete(item.id)}
+                  >
                     Delete
                   </button>
+                </td>
+                <td>
+                  {item.currentUsers && item.currentUsers.length > 0 ? (
+                    <table className="w-100 table table-bordered">
+                      <thead className="table-light">
+                        <tr>
+                          <th>#</th>
+                          <th>User</th>
+                          <th>Is Overdue</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {item.currentUsers.map((user, index) => (
+                          <tr className={user.isOverDue ? "table-danger" : ""}>
+                            <td>{index + 1}</td>
+                            <td>{user.userName}</td>
+                            <td>{user.isOverDue ? "Yes" : "No"}</td>
+                            <td>
+                              <button
+                                className="btn btn-primary btn-sm"
+                                onClick={() =>
+                                  openReturnConfirmation(user.requestId)
+                                }
+                              >
+                                Return Now
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <span>No current borrowers</span>
+                  )}
                 </td>
               </tr>
             ))}
@@ -93,7 +153,10 @@ export default function EquipmentAdmin() {
 
       <EquipmentFormModal
         show={showModal}
-        onHide={() => { setShowModal(false); setEditingItem(null); }}
+        onHide={() => {
+          setShowModal(false);
+          setEditingItem(null);
+        }}
         onSave={handleSave}
         initialData={editingItem}
       />

@@ -23,7 +23,6 @@ export default function EquipmentFormModal({
         category: "",
         condition: "Good",
         quantity: 1,
-        availability: true,
       });
     }
   }, [initialData]);
@@ -82,15 +81,21 @@ export default function EquipmentFormModal({
                   <label htmlFor="category" className="form-label">
                     Category
                   </label>
-                  <input
+                  <select
                     id="category"
-                    type="text"
-                    className="form-control"
+                    className="form-select"
                     name="category"
                     value={form.category}
                     onChange={handleChange}
                     required
-                  />
+                  >
+                    <option value="Music">Music</option>
+                    <option value="Sports">Sports</option>
+                    <option value="Media">Media</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Lab">Lab</option>
+                    <option value="Media">Media</option>
+                  </select>
                 </div>
                 <div className="col-12">
                   <label htmlFor="condition" className="form-label">
@@ -122,19 +127,6 @@ export default function EquipmentFormModal({
                     min="1"
                     required
                   />
-                </div>
-                <div className="form-check mb-3">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    name="availability"
-                    checked={form.availability}
-                    onChange={handleChange}
-                    id="availability"
-                  />
-                  <label className="form-check-label" htmlFor="availability">
-                    Available
-                  </label>
                 </div>
               </div>
             </div>

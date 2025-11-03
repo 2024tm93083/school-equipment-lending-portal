@@ -6,6 +6,7 @@ import db from "./src/db/database.js";
 
 import userRoutes from "./src/routes/user.routes.js";
 import equipmentRoutes from "./src/routes/equipment.routes.js";
+import requestRoutes from "./src/routes/request.routes.js";
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.get("/", (req, res) => res.json({ message: "API running ✅" }));
 // Routes
 app.use('/api/user', userRoutes);
 app.use("/api/equipment", equipmentRoutes);
+app.use("/api/request", requestRoutes);
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 

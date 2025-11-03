@@ -33,7 +33,7 @@ export const login = (req, res) => {
       }
       try {
         const token = jwt.sign(
-          { userId: user.userId, email: user.email, role: user.role },
+          { userId: user.id, email: user.email, role: user.role },
           JWT_SECRET,
           { expiresIn: "24h" }
         );
@@ -41,7 +41,7 @@ export const login = (req, res) => {
         res.status(200).json({
           token,
           user: {
-            userId: user.userId,
+            userId: user.id,
             email: user.email,
             role: user.role,
             name: user.name,
